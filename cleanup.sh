@@ -1,4 +1,4 @@
 #!/bin/bash
 
-repos="merge rebase"
+repos="merge merge-no-ff merge-ff-only rebase"
 rm -rf $repos

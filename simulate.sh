@@ -1,6 +1,6 @@
 #!/bin/bash
 
-repos="merge rebase"
+repos="merge merge-no-ff merge-ff-only rebase"
 rm -rf $repos
 mkdir $repos
 
@@ -41,7 +41,13 @@ function sync() {
   git checkout $branch
   if [ "$syncType" == "merge" ]
     then
-      git merge --ff --no-edit master
+      git merge --no-edit master
+  elif [ "$syncType" == "merge-no-ff" ]
+    then
+      git merge --no-ff --no-edit master
+  elif [ "$syncType" == "merge-ff-only" ]
+    then
+      git merge --ff-only --no-edit master
   elif [ "$syncType" == "rebase" ]
     then
       git rebase master
