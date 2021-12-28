@@ -3,6 +3,7 @@
 repos="merge merge-no-ff merge-ff-only rebase"
 rm -rf $repos
 mkdir $repos
+changeNumber=1
 
 function create_branch() {
   local ticketName=$1
@@ -11,14 +12,14 @@ function create_branch() {
 
 function work_on() {
   local ticketName=$1
-  local start=$2
-  local changes=$3
-  local fileName="${4:-$ticketName}"
+  local changes=$2
+  local fileName="${3:-$ticketName}"
   git checkout $ticketName
-  for ((i=$start;i<$start+$changes;i++)); do
-    echo "$ticketName - change $i" >> $fileName
+  for ((i=0;i<$changes;i++)); do
+    echo "$ticketName - change $changeNumber" >> $fileName
     git add -A
-    git commit -qm "$ticketName change $i"
+    git commit -qm "$ticketName change $changeNumber"
+    ((changeNumber++))
   done
   git checkout master
 }
@@ -66,19 +67,19 @@ function merge_to_master() {
 function simulate_work() {
   local syncType=$1
   create_branch TICKET-1
-  work_on TICKET-1 1 2
+  work_on TICKET-1 2
   create_branch TICKET-2
-  work_on TICKET-2 1 2
-  work_on TICKET-1 3 2
+  work_on TICKET-2 2
+  work_on TICKET-1 2
   merge_to_master TICKET-1
   sync TICKET-2 $syncType
-  work_on TICKET-2 3 4
+  work_on TICKET-2 4
   create_branch TICKET-3
-  work_on TICKET-3 1 2
-  # work_on TICKET-2 8 100
+  work_on TICKET-3 2
+  # work_on TICKET-2 100
   merge_to_master TICKET-2
   sync TICKET-3 $syncType
-  work_on TICKET-3 3 4
+  work_on TICKET-3 4
   merge_to_master TICKET-3
 }
 
@@ -86,6 +87,7 @@ for repo in $repos; do
   pushd $repo
   git init -q
 
+  changeNumber=1
   initial_commit
   simulate_work $repo
 
