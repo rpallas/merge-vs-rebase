@@ -85,5 +85,6 @@ for repo in $repos; do
   popd
 done
 
-git_log merge
-git_log rebase
+for repo in $repos; do
+  git_log $repo
+done
