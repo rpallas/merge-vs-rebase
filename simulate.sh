@@ -13,11 +13,12 @@ function work_on() {
   local ticketName=$1
   local start=$2
   local changes=$3
+  local fileName="${4:-$ticketName}"
   git checkout $ticketName
   for ((i=$start;i<$start+$changes;i++)); do
-    echo "$ticketName - change $i" >> $ticketName
+    echo "$ticketName - change $i" >> $fileName
     git add -A
-    git commit -qm "change $i"
+    git commit -qm "$ticketName change $i"
   done
   git checkout master
 }
